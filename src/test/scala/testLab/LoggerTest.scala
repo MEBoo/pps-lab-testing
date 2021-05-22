@@ -1,7 +1,6 @@
-package testLecture
+package testLab
 
 import org.junit.jupiter.api.Test
-import testLab.BasicLogger
 
 class LoggerTest {
 

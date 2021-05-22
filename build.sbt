@@ -22,7 +22,7 @@ lazy val root = (project in file("."))
       "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % Test,
       "com.tngtech.archunit" % "archunit" % "0.18.0" % Test,
       "org.slf4j" % "slf4j-log4j12" % "1.7.26" % Test
-),
+    ),
     crossPaths := false, // https://github.com/sbt/junit-interface/issues/35
     Test / parallelExecution := false,
     coverageEnabled := true
