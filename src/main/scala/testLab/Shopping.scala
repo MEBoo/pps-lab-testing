@@ -6,7 +6,10 @@ case class Item(product: Product, details: ItemDetails)
 case class ItemDetails(qty: Int, price: Price)
 
 trait Cart {
+
+
   def add(item: Item)
+  def remove(product: Product):Int
   def content: Set[Item]
   def size: Int
   def totalCost: Double
@@ -18,6 +21,11 @@ class BasicCart(private var items: Map[Product, ItemDetails] = Map()) extends Ca
       i.copy(qty = i.qty + item.details.qty,
       price = Price(i.price.value+item.details.price.value))).getOrElse(item.details))
   }
+  def remove(product: Product):Int = items.get(product) match {
+      case Some(itemDetails: ItemDetails) => {items -= product;itemDetails.qty}
+      case _ => 0
+    }
+
   def content: Set[Item] = items.map { case (prod,details) => Item(prod,details) } toSet
   def size = items.size
   def totalCost: Double = items.values.foldRight(0.0)(_.price.value+_)
@@ -63,6 +71,7 @@ class Shopping(private val warehouse: Warehouse,
                private val catalog: Catalog,
                private var cart: Cart,
                private val logger: Logger) {
+
   def pick(p: Product, qty: Int): Cart = {
     assert(qty>0) // precondition
 
@@ -77,6 +86,14 @@ class Shopping(private val warehouse: Warehouse,
       logger.log(s"Updated cart: now it contains ${cart.size} items for total ${cart.totalCost}")
     } else{
       logger.log("There are no pieces of the requested product in the warehouse.")
+    }
+    cart
+  }
+
+  def remove(p: Product): Cart = {
+    val howMany:Int = cart.remove(p)
+    if(howMany>0) {
+      warehouse.supply(p, howMany)
     }
     cart
   }
